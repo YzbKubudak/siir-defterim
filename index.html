@@ -1,205 +1,135 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Şiir Defterim</title>
+    <meta charset="UTF-8">
+    <title>Şiir Defterim ve Kalbimden Sana</title>
 
-  <!-- El yazısı fontu -->
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+    <!-- El yazısı font -->
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Dancing Script', cursive;
-      background: #e9eef5;
-    }
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #87ceeb; /* gök mavisi */
+            font-family: 'Patrick Hand', cursive;
+        }
 
-    /* GİRİŞ EKRANI */
-    #entry {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(#b3d9ff, #e9eef5);
-    }
+        /* Şifre ekranı */
+        #passwordScreen {
+            position: fixed;
+            inset: 0;
+            background-color: #87ceeb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    #entry-box {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      text-align: center;
-    }
+        .password-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
 
-    #entry-box input {
-      padding: 10px;
-      font-size: 18px;
-      margin-bottom: 10px;
-      width: 100%;
-    }
+        input {
+            padding: 10px;
+            font-size: 18px;
+            margin-top: 10px;
+        }
 
-    /* BAŞLIK */
-    header {
-      background: #a8d8ff; /* gök mavisi */
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
 
-    header h1 { margin: 0; font-size: 36px; }
-    header p { margin: 5px 0 15px; font-size: 22px; }
+        /* Site */
+        #site {
+            display: none;
+            padding: 40px;
+        }
 
-    .admin-btn {
-      display: inline-block;
-      padding: 8px 18px;
-      background: #3b2f2f;
-      color: white;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 16px;
-    }
+        header {
+            background-color: #87ceeb;
+            text-align: center;
+            padding: 30px;
+            font-size: 36px;
+            position: relative;
+        }
 
-    /* SAYFA (HER ŞİİR AYRI) */
-    .page {
-      max-width: 780px;
-      margin: 60px auto;
-      padding: 50px 45px;
-      background:
-        radial-gradient(circle at 10% 10%, rgba(255,255,255,0.45), rgba(255,255,255,0) 40%),
-        radial-gradient(circle at 90% 15%, rgba(255,255,255,0.35), rgba(255,255,255,0) 45%),
-        radial-gradient(circle at 20% 90%, rgba(0,0,0,0.12), rgba(0,0,0,0) 50%),
-        radial-gradient(circle at 80% 85%, rgba(0,0,0,0.15), rgba(0,0,0,0) 55%),
-        linear-gradient(180deg, #f8e7b1 0%, #fdf1c1 40%, #f4dea0 100%);
-      border-radius: 14px;
-      box-shadow:
-        inset 0 0 60px rgba(90,45,10,0.55),
-        inset 0 0 120px rgba(120,60,15,0.35),
-        0 10px 25px rgba(0,0,0,0.25);
-      position: relative;
-    }
+        /* Yönetici butonu */
+        .admin-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: white;
+            border-radius: 20px;
+            padding: 8px 16px;
+        }
 
-    /* SARMAŞIKLAR */
-    .page::before, .page::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 80px;
-      background-size: contain;
-      background-repeat: repeat-y;
-      opacity: 0.9;
-    }
+        /* Şiir sayfası */
+        .page {
+            background: #fffdf5;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+        }
 
-    .page::before {
-      left: -70px;
-      background-image: url('https://i.imgur.com/1ZQZ1Zy.png'); /* mavi sarmaşık */
-    }
+        h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
 
-    .page::after {
-      right: -70px;
-      background-image: url('https://i.imgur.com/5c4yQbJ.png'); /* kırmızı sarmaşık */
-    }
-
-    .poem-title {
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    pre {
-      white-space: pre-wrap;
-      font-size: 22px;
-      line-height: 1.8;
-    }
-
-    .delete-btn {
-      margin-top: 20px;
-      background: #a33;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #adminPanel { display: none; }
-  </style>
+        .poem {
+            font-size: 20px;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+    </style>
 </head>
 <body>
 
-<!-- GİRİŞ -->
-<div id="entry">
-  <div id="entry-box">
-    <h2>Bu defter kilitli</h2>
-    <input type="password" id="entryPass" placeholder="Şifre" />
-    <button onclick="enterSite()">Giriş</button>
-  </div>
+<div id="passwordScreen">
+    <div class="password-box">
+        <h2>Şifreli Giriş</h2>
+        <input type="password" id="password" placeholder="Şifre">
+        <br>
+        <button onclick="checkPassword()">Giriş</button>
+    </div>
 </div>
 
-<!-- SİTE -->
-<div id="site" style="display:none;">
-  <header>
-    <h1>Şiir Defterim</h1>
-    <p>Kalbimden Sana</p>
-    <div class="admin-btn" onclick="showAdmin()">Yönetici Girişi</div>
-  </header>
+<div id="site">
+    <header>
+        Şiir Defterim ve Kalbimden Sana
+        <button class="admin-btn">Yönetici Girişi</button>
+    </header>
 
-  <div id="adminPanel" class="page">
-    <h2>Yeni Şiir Ekle</h2>
-    <input id="title" placeholder="Şiir başlığı" />
-    <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea>
-    <button onclick="addPoem()">Ekle</button>
-  </div>
-
-  <div id="poems"></div>
+    <div class="page">
+        <h2>Bir Şiir</h2>
+        <div class="poem">
+Sen uzaktasın  
+ama kalbim hep yanında  
+Bu defter  
+sana attığım  
+sessiz adımlar…
+        </div>
+    </div>
 </div>
 
 <script>
-  const ENTRY_PASSWORD = '2808';
-  const ADMIN_PASSWORD = '0828';
-  let poems = JSON.parse(localStorage.getItem('poems')) || [];
-
-  function enterSite() {
-    if (document.getElementById('entryPass').value === ENTRY_PASSWORD) {
-      document.getElementById('entry').style.display = 'none';
-      document.getElementById('site').style.display = 'block';
-      renderPoems(false);
-    } else alert('Şifre yanlış');
-  }
-
-  function showAdmin() {
-    const pass = prompt('Yönetici şifresi');
-    if (pass === ADMIN_PASSWORD) {
-      document.getElementById('adminPanel').style.display = 'block';
-      renderPoems(true);
+    function checkPassword() {
+        const pass = document.getElementById("password").value;
+        if (pass === "2808") {
+            document.getElementById("passwordScreen").style.display = "none";
+            document.getElementById("site").style.display = "block";
+        } else {
+            alert("Yanlış şifre");
+        }
     }
-  }
-
-  function renderPoems(isAdmin) {
-    const div = document.getElementById('poems');
-    div.innerHTML = '';
-    poems.forEach((p,i)=>{
-      const page = document.createElement('div');
-      page.className = 'page';
-      page.innerHTML = `<div class="poem-title">${p.title}</div><pre>${p.content}</pre>${isAdmin ? `<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>` : ''}`;
-      div.appendChild(page);
-    });
-    localStorage.setItem('poems', JSON.stringify(poems));
-  }
-
-  function addPoem() {
-    const t = title.value.trim();
-    const c = content.value.trim();
-    if(!t||!c) return;
-    poems.unshift({title:t,content:c});
-    title.value=''; content.value='';
-    renderPoems(true);
-  }
-
-  function deletePoem(i) {
-    poems.splice(i,1);
-    renderPoems(true);
-  }
 </script>
 
 </body>
