@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Şiir Defterim</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background: #f5f1ec;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #3b2f2f;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 30px;
+      background: #fdf1c1;
+      border-radius: 8px;
+      box-shadow: inset 0 0 40px rgba(120, 72, 0, 0.35), 0 4px 10px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    main::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 8px;
+      box-shadow: inset 0 0 25px rgba(80, 40, 0, 0.6);
+      pointer-events: none;
+    }
+    h2 { margin-top: 0; }
+    textarea, input {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      background: #3b2f2f;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .delete-btn {
+      background: #a33;
+      margin-top: 10px;
+    }
+    .poem {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+    .poem-title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    #adminPanel { display: none; }
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap');
+
+    /* El yazısı fontu */
+    body {
+      font-family: 'Dancing Script', 'Georgia', serif;
+    }
+
+    /* Hafif kağıt dokusu */
+    main {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 40%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0) 45%),
+        radial-gradient(circle at 40% 80%, rgba(0,0,0,0.06), rgba(0,0,0,0) 45%),
+        linear-gradient(0deg, rgba(0,0,0,0.04), rgba(0,0,0,0.02)),
+        #fdf1c1;
+      background-blend-mode: overlay, overlay, multiply, normal, normal;
+    }
+
+    /* Şiir metni el yazısı hissini güçlendirsin */
+    pre {
+      font-family: 'Dancing Script', 'Georgia', serif;
+      font-size: 20px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+</style>
+</head>
+<body>
+  <header>
+    <h1>📜 Şiir Defterim</h1>
+    <p>Kalbimden sana</p>
+  </header>
+
+  <main>
+    <div id="login">
+      <h2>Yönetici Girişi</h2>
+      <input type="password" id="password" placeholder="Şifreyi gir" />
+      <button onclick="login()">Giriş</button>
+    </div>
+
+    <div id="adminPanel">
+      <h2>Yeni Şiir Ekle</h2>
+      <input type="text" id="title" placeholder="Şiirin başlığı" />
+      <textarea id="content" rows="5" placeholder="Şiiri buraya yaz..."></textarea>
+      <button onclick="addPoem()">Şiiri Ekle</button>
+    </div>
+
+    <h2>Şiirler</h2>
+    <div id="poems"></div>
+  </main>
+
+  <script>
+    const ADMIN_PASSWORD = "1234"; // BURAYI DEĞİŞTİR
+    let poems = JSON.parse(localStorage.getItem('poems')) || [];
+
+    function login() {
+      const input = document.getElementById('password').value;
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('login').style.display = 'none';
+        renderPoems(true);
+      } else {
+        alert('Şifre yanlış');
+      }
+    }
+
+    function renderPoems(isAdmin = false) {
+      const poemsDiv = document.getElementById('poems');
+      poemsDiv.innerHTML = '';
+      poems.forEach((poem, index) => {
+        const div = document.createElement('div');
+        div.className = 'poem';
+        div.innerHTML = `
+          <div class="poem-title">${poem.title}</div>
+          <pre>${poem.content}</pre>
+          ${isAdmin ? `<button class="delete-btn" onclick="deletePoem(${index})">Sil</button>` : ''}
+        `;
+        poemsDiv.appendChild(div);
+      });
+      localStorage.setItem('poems', JSON.stringify(poems));
+    }
+
+    function addPoem() {
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      if (!title || !content) return alert('Başlık ve şiir boş olamaz');
+      poems.unshift({ title, content });
+      document.getElementById('title').value = '';
+      document.getElementById('content').value = '';
+      renderPoems(true);
+    }
+
+    function deletePoem(index) {
+      poems.splice(index, 1);
+      renderPoems(true);
+    }
+
+    renderPoems(false);
+  </script>
+</body>
+</html>
