@@ -208,6 +208,7 @@ function toggleNight(){
 }
 
 function renderPoems(isAdmin){
+  const poemsDiv = document.getElementById('poems');
   poemsDiv.innerHTML='';
   poems.forEach((p,i)=>{
     poemsDiv.innerHTML+=`
@@ -241,7 +242,7 @@ function deletePoem(i){
 function printPoem(btn){
   const page=btn.parentElement.innerHTML;
   const w=window.open('');
-  w.document.write(`<body style="font-family:'Dancing Script'">${page}</body>`);
+ w.document.write(`<body style="font-family:'Dancing Script'">${page}</body>`);
   w.print();
 }
 </script>
