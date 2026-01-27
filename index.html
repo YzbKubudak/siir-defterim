@@ -27,10 +27,6 @@ body.night header{
 body.night .page{
   background:linear-gradient(180deg,#2b2b2b,#1e1e1e);
   color:#f5f5f5;
-  box-shadow:
-    inset 0 0 60px rgba(0,0,0,.8),
-    inset 0 0 120px rgba(0,0,0,.6),
-    0 10px 25px rgba(0,0,0,.6);
 }
 
 body.night .admin-btn{
@@ -44,7 +40,6 @@ body.night .admin-btn{
   display:flex;
   align-items:center;
   justify-content:center;
-  background:#87ceeb;
 }
 
 #entry-box{
@@ -66,18 +61,19 @@ header{
 header h1{
   margin:0;
   font-size:48px;
+  animation: breathe 4s ease-in-out infinite;
   text-shadow:
-    1px 1px 0 rgba(255,255,255,0.85),
-    2px 2px 2px rgba(255,255,255,0.6),
-    4px 4px 8px rgba(0,0,0,0.35);
+    2px 2px 0 rgba(255,255,255,0.9),
+    4px 4px 10px rgba(0,0,0,0.4);
+}
+
+@keyframes breathe{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.03);}
 }
 
 header p{
-  margin:5px 0 15px;
   font-size:28px;
-  text-shadow:
-    1px 1px 0 rgba(255,255,255,0.8),
-    3px 3px 6px rgba(0,0,0,0.3);
 }
 
 /* BUTONLAR */
@@ -91,15 +87,10 @@ header p{
   cursor:pointer;
 }
 
-.admin-btn.admin{
-  right:20px;
-}
+.admin{right:20px;}
+.night-btn{right:160px;}
 
-.admin-btn.night-btn{
-  right:160px;
-}
-
-/* SAYFA – YANIK */
+/* SAYFA */
 .page{
   max-width:780px;
   margin:60px auto;
@@ -110,38 +101,55 @@ header p{
     inset 0 0 60px rgba(90,45,10,.55),
     inset 0 0 120px rgba(120,60,15,.45),
     0 10px 25px rgba(0,0,0,.25);
+  animation: fadeUp .8s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(40px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
 /* ŞİİR */
 .poem-title{
-  font-size:56px; /* 2 kat */
+  font-size:56px;
   text-align:center;
-  margin-bottom:20px;
 }
 
 pre{
-  font-family:'Dancing Script', cursive;
-  white-space:pre-wrap;
-  font-size:26px; /* büyütüldü */
-  line-height:1.8;
+  font-size:26px;
   text-align:center;
+  white-space:pre-wrap;
 }
 
-.poem-date{
-  margin-top:15px;
-  font-size:16px;
+.poem-sign{
+  margin-top:20px;
+  font-size:18px;
   opacity:.7;
   text-align:center;
 }
 
+.poem-date{
+  font-size:14px;
+  opacity:.6;
+  text-align:center;
+}
+
+.print-btn{
+  display:block;
+  margin:20px auto 0;
+  padding:6px 14px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
 .delete-btn{
-  margin-top:20px;
+  margin-top:10px;
   background:#a33;
   color:white;
   border:none;
-  padding:8px 14px;
+  padding:6px 12px;
   border-radius:6px;
-  cursor:pointer;
 }
 
 #adminPanel{display:none}
@@ -162,13 +170,11 @@ pre{
 <header>
   <h1>Şiir Defterim</h1>
   <p>Kalbimden Sana Sevgilim</p>
-
   <div class="admin-btn night-btn" onclick="toggleNight()">🌙</div>
   <div class="admin-btn admin" onclick="showAdmin()">Yönetici</div>
 </header>
 
 <div id="adminPanel" class="page">
-  <h2>Yeni Şiir Ekle</h2>
   <input id="title" placeholder="Şiir başlığı" />
   <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea>
   <button onclick="addPoem()">Ekle</button>
@@ -187,12 +193,11 @@ function enterSite(){
     entry.style.display='none';
     site.style.display='block';
     renderPoems(false);
-  }else alert('Şifre yanlış');
+  }
 }
 
 function showAdmin(){
-  const pass=prompt('Yönetici şifresi');
-  if(pass===ADMIN_PASSWORD){
+  if(prompt('Yönetici şifresi')===ADMIN_PASSWORD){
     adminPanel.style.display='block';
     renderPoems(true);
   }
@@ -203,24 +208,22 @@ function toggleNight(){
 }
 
 function renderPoems(isAdmin){
-  poemsDiv=document.getElementById('poems');
   poemsDiv.innerHTML='';
   poems.forEach((p,i)=>{
-    const page=document.createElement('div');
-    page.className='page';
-    page.innerHTML=`
+    poemsDiv.innerHTML+=`
+    <div class="page">
       <div class="poem-title">${p.title}</div>
       <pre>${p.content}</pre>
-      <div class="poem-date">${p.date || ''}</div>
+      <div class="poem-sign">— Kalbinden, her zaman</div>
+      <div class="poem-date">${p.date}</div>
+      <button class="print-btn" onclick="printPoem(this)">🖨️ PDF / Yazdır</button>
       ${isAdmin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:''}
-    `;
-    poemsDiv.appendChild(page);
+    </div>`;
   });
   localStorage.setItem('poems',JSON.stringify(poems));
 }
 
 function addPoem(){
-  if(!title.value||!content.value)return;
   poems.unshift({
     title:title.value,
     content:content.value,
@@ -233,6 +236,13 @@ function addPoem(){
 function deletePoem(i){
   poems.splice(i,1);
   renderPoems(true);
+}
+
+function printPoem(btn){
+  const page=btn.parentElement.innerHTML;
+  const w=window.open('');
+  w.document.write(`<body style="font-family:'Dancing Script'">${page}</body>`);
+  w.print();
 }
 </script>
 
