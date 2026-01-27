@@ -133,11 +133,13 @@ const ADMIN_PASSWORD='0828';
 let poems=JSON.parse(localStorage.getItem('poems'))||[];
 
 function enterSite(){
-  if(entryPass.value===ENTRY_PASSWORD){
-    entry.style.display='none';
-    site.style.display='block';
+  if(document.getElementById('entryPass').value===ENTRY_PASSWORD){
+    document.getElementById('entry').style.display='none';
+    document.getElementById('site').style.display='block';
     renderPoems(false);
-  }else alert('Şifre yanlış');
+  }else{
+    alert('Şifre yanlış');
+  }
 }
 
 function showAdmin(){
