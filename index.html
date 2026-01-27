@@ -1,170 +1,177 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Şiir Defterim ve Kalbimden Sana</title>
-<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Şiir Defterim</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body{
-    margin:0;
-    background:#87ceeb;
-    font-family:'Patrick Hand', cursive;
+  margin:0;
+  font-family:'Dancing Script', cursive;
+  background:#87ceeb; /* tamamen gök mavisi */
 }
 
-/* Şifre ekranı */
-#login{
-    position:fixed;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#87ceeb;
-}
-.login-box{
-    background:white;
-    padding:30px;
-    border-radius:12px;
-    text-align:center;
-}
-input, textarea{
-    padding:10px;
-    font-size:18px;
-    width:100%;
-    margin-top:10px;
-    font-family:inherit;
-}
-button{
-    padding:8px 16px;
-    font-family:inherit;
-    cursor:pointer;
-    margin-top:10px;
+/* GİRİŞ */
+#entry{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#87ceeb;
 }
 
-/* Site */
-#site{display:none}
+#entry-box{
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  text-align:center;
+}
 
-/* Başlık */
+/* BAŞLIK */
 header{
-    position:relative;
-    text-align:center;
-    padding:30px;
-    font-size:36px;
-    background:#87ceeb;
+  background:#87ceeb;
+  padding:25px;
+  text-align:center;
+  position:relative;
 }
+
+header h1{margin:0;font-size:36px}
+header p{margin:5px 0 15px;font-size:22px}
+
+/* Yönetici butonu sağ üst */
 .admin-btn{
-    position:absolute;
-    right:20px;
-    top:20px;
-    background:white;
-    border-radius:20px;
+  position:absolute;
+  right:20px;
+  top:20px;
+  padding:8px 18px;
+  background:#3b2f2f;
+  color:white;
+  border-radius:20px;
+  cursor:pointer;
 }
 
-/* Şiir sayfası */
+/* SAYFA – YANIK KENAR */
 .page{
-    background:#fffdf5;
-    max-width:600px;
-    margin:40px auto;
-    padding:40px;
-    text-align:center;
-    border-radius:10px;
-}
-h2{font-size:28px}
-
-/* Navigasyon */
-.nav{
-    display:flex;
-    justify-content:space-between;
-    margin-top:20px;
+  max-width:780px;
+  margin:60px auto;
+  padding:50px 45px;
+  background:linear-gradient(180deg,#f8e7b1,#f4dea0);
+  border-radius:14px;
+  box-shadow:
+    inset 0 0 60px rgba(90,45,10,.55),
+    inset 0 0 120px rgba(120,60,15,.45),
+    0 10px 25px rgba(0,0,0,.25);
 }
 
-/* Admin panel */
-#adminPanel{
-    display:none;
-    max-width:600px;
-    margin:20px auto;
-    background:white;
-    padding:20px;
-    border-radius:10px;
+/* SARMAŞIKLAR KALDIRILDI */
+.page::before,
+.page::after{display:none}
+
+/* ŞİİR */
+.poem-title{
+  font-size:28px;
+  text-align:center;
+  margin-bottom:20px;
 }
+
+pre{
+  font-family:'Dancing Script', cursive;
+  white-space:pre-wrap;
+  font-size:22px;
+  line-height:1.8;
+  text-align:center; /* şiir ortalı */
+}
+
+.delete-btn{
+  margin-top:20px;
+  background:#a33;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+#adminPanel{display:none}
 </style>
 </head>
 
 <body>
 
-<div id="login">
-    <div class="login-box">
-        <h2>Şifreli Giriş</h2>
-        <input type="password" id="pass" placeholder="Şifre">
-        <button onclick="login()">Giriş</button>
-    </div>
+<div id="entry">
+  <div id="entry-box">
+    <h2>Bu defter kilitli</h2>
+    <input type="password" id="entryPass" placeholder="Şifre" />
+    <button onclick="enterSite()">Giriş</button>
+  </div>
 </div>
 
-<div id="site">
+<div id="site" style="display:none;">
 <header>
-    Şiir Defterim ve Kalbimden Sana
-    <button class="admin-btn" onclick="toggleAdmin()">Yönetici</button>
+  <h1>Şiir Defterim</h1>
+  <p>Kalbimden Sana</p>
+  <div class="admin-btn" onclick="showAdmin()">Yönetici Girişi</div>
 </header>
 
-<div id="adminPanel">
-    <h3>Şiir Ekle</h3>
-    <input id="title" placeholder="Şiir Başlığı">
-    <textarea id="text" rows="5" placeholder="Şiir"></textarea>
-    <button onclick="addPoem()">Ekle</button>
-    <button onclick="deletePoem()">Bu Şiiri Sil</button>
+<div id="adminPanel" class="page">
+  <h2>Yeni Şiir Ekle</h2>
+  <input id="title" placeholder="Şiir başlığı" />
+  <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea>
+  <button onclick="addPoem()">Ekle</button>
 </div>
 
-<div class="page">
-    <h2 id="poemTitle"></h2>
-    <div id="poemText" style="white-space:pre-line;font-size:20px"></div>
-
-    <div class="nav">
-        <button onclick="prevPoem()">⬅ Önceki</button>
-        <button onclick="nextPoem()">Sonraki ➡</button>
-    </div>
-</div>
+<div id="poems"></div>
 </div>
 
 <script>
-let poems=[
-    {title:"Bir Şiir", text:"Kalbim sana\nuzaktan dokunur\nbu satırlar\nsessizce\nseni anlatır"}
-];
-let index=0;
+const ENTRY_PASSWORD='2808';
+const ADMIN_PASSWORD='0828';
+let poems=JSON.parse(localStorage.getItem('poems'))||[];
 
-function render(){
-    poemTitle.innerText=poems[index].title;
-    poemText.innerText=poems[index].text;
+function enterSite(){
+  if(entryPass.value===ENTRY_PASSWORD){
+    entry.style.display='none';
+    site.style.display='block';
+    renderPoems(false);
+  }else alert('Şifre yanlış');
 }
-render();
 
-function nextPoem(){ if(index<poems.length-1){index++;render()} }
-function prevPoem(){ if(index>0){index--;render()} }
+function showAdmin(){
+  const pass=prompt('Yönetici şifresi');
+  if(pass===ADMIN_PASSWORD){
+    adminPanel.style.display='block';
+    renderPoems(true);
+  }
+}
+
+function renderPoems(isAdmin){
+  poemsDiv=document.getElementById('poems');
+  poemsDiv.innerHTML='';
+  poems.forEach((p,i)=>{
+    const page=document.createElement('div');
+    page.className='page';
+    page.innerHTML=`<div class="poem-title">${p.title}</div>
+    <pre>${p.content}</pre>
+    ${isAdmin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:''}`;
+    poemsDiv.appendChild(page);
+  });
+  localStorage.setItem('poems',JSON.stringify(poems));
+}
 
 function addPoem(){
-    poems.push({title:title.value,text:text.value});
-    index=poems.length-1;
-    render();
-    title.value=text.value="";
+  if(!title.value||!content.value)return;
+  poems.unshift({title:title.value,content:content.value});
+  title.value='';content.value='';
+  renderPoems(true);
 }
 
-function deletePoem(){
-    if(poems.length>1){
-        poems.splice(index,1);
-        index=0;
-        render();
-    }
-}
-
-function toggleAdmin(){
-    adminPanel.style.display =
-        adminPanel.style.display==="none"?"block":"none";
-}
-
-function login(){
-    if(pass.value==="2808"){
-        login.style.display="none";
-        site.style.display="block";
-    }else alert("Yanlış şifre");
+function deletePoem(i){
+  poems.splice(i,1);
+  renderPoems(true);
 }
 </script>
 
