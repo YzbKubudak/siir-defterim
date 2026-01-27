@@ -11,7 +11,31 @@
 body{
   margin:0;
   font-family:'Dancing Script', cursive;
-  background:#87ceeb; /* tamamen gök mavisi */
+  background:#87ceeb;
+  transition: background 0.4s;
+}
+
+/* 🌙 GECE MODU */
+body.night{
+  background:#0f1c2e;
+}
+
+body.night header{
+  background:#14253d;
+}
+
+body.night .page{
+  background:linear-gradient(180deg,#2b2b2b,#1e1e1e);
+  color:#f5f5f5;
+  box-shadow:
+    inset 0 0 60px rgba(0,0,0,.8),
+    inset 0 0 120px rgba(0,0,0,.6),
+    0 10px 25px rgba(0,0,0,.6);
+}
+
+body.night .admin-btn{
+  background:#ddd;
+  color:#222;
 }
 
 /* GİRİŞ */
@@ -56,10 +80,9 @@ header p{
     3px 3px 6px rgba(0,0,0,0.3);
 }
 
-/* Yönetici butonu sağ üst */
+/* BUTONLAR */
 .admin-btn{
   position:absolute;
-  right:20px;
   top:20px;
   padding:8px 18px;
   background:#3b2f2f;
@@ -68,7 +91,15 @@ header p{
   cursor:pointer;
 }
 
-/* SAYFA – YANIK KENAR */
+.admin-btn.admin{
+  right:20px;
+}
+
+.admin-btn.night-btn{
+  right:160px;
+}
+
+/* SAYFA – YANIK */
 .page{
   max-width:780px;
   margin:60px auto;
@@ -81,13 +112,9 @@ header p{
     0 10px 25px rgba(0,0,0,.25);
 }
 
-/* SARMAŞIKLAR KALDIRILDI */
-.page::before,
-.page::after{display:none}
-
 /* ŞİİR */
 .poem-title{
-  font-size:28px;
+  font-size:56px; /* 2 kat */
   text-align:center;
   margin-bottom:20px;
 }
@@ -95,9 +122,16 @@ header p{
 pre{
   font-family:'Dancing Script', cursive;
   white-space:pre-wrap;
-  font-size:22px;
+  font-size:26px; /* büyütüldü */
   line-height:1.8;
-  text-align:center; /* şiir ortalı */
+  text-align:center;
+}
+
+.poem-date{
+  margin-top:15px;
+  font-size:16px;
+  opacity:.7;
+  text-align:center;
 }
 
 .delete-btn{
@@ -128,7 +162,9 @@ pre{
 <header>
   <h1>Şiir Defterim</h1>
   <p>Kalbimden Sana Sevgilim</p>
-  <div class="admin-btn" onclick="showAdmin()">Yönetici Girişi</div>
+
+  <div class="admin-btn night-btn" onclick="toggleNight()">🌙</div>
+  <div class="admin-btn admin" onclick="showAdmin()">Yönetici</div>
 </header>
 
 <div id="adminPanel" class="page">
@@ -147,13 +183,11 @@ const ADMIN_PASSWORD='0828';
 let poems=JSON.parse(localStorage.getItem('poems'))||[];
 
 function enterSite(){
-  if(document.getElementById('entryPass').value===ENTRY_PASSWORD){
-    document.getElementById('entry').style.display='none';
-    document.getElementById('site').style.display='block';
+  if(entryPass.value===ENTRY_PASSWORD){
+    entry.style.display='none';
+    site.style.display='block';
     renderPoems(false);
-  }else{
-    alert('Şifre yanlış');
-  }
+  }else alert('Şifre yanlış');
 }
 
 function showAdmin(){
@@ -164,15 +198,22 @@ function showAdmin(){
   }
 }
 
+function toggleNight(){
+  document.body.classList.toggle('night');
+}
+
 function renderPoems(isAdmin){
   poemsDiv=document.getElementById('poems');
   poemsDiv.innerHTML='';
   poems.forEach((p,i)=>{
     const page=document.createElement('div');
     page.className='page';
-    page.innerHTML=`<div class="poem-title">${p.title}</div>
-    <pre>${p.content}</pre>
-    ${isAdmin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:''}`;
+    page.innerHTML=`
+      <div class="poem-title">${p.title}</div>
+      <pre>${p.content}</pre>
+      <div class="poem-date">${p.date || ''}</div>
+      ${isAdmin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:''}
+    `;
     poemsDiv.appendChild(page);
   });
   localStorage.setItem('poems',JSON.stringify(poems));
@@ -180,7 +221,11 @@ function renderPoems(isAdmin){
 
 function addPoem(){
   if(!title.value||!content.value)return;
-  poems.unshift({title:title.value,content:content.value});
+  poems.unshift({
+    title:title.value,
+    content:content.value,
+    date:new Date().toLocaleString('tr-TR')
+  });
   title.value='';content.value='';
   renderPoems(true);
 }
