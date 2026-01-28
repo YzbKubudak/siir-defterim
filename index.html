@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Şiir Defterim</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+<!-- EL YAZISI FONTLAR -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body{
   margin:0;
-  font-family:'Dancing Script', cursive;
   background:#87ceeb;
-  transition: background .4s;
+  font-family:'Dancing Script', cursive;
+  transition:.4s;
 }
 
 /* 🌙 GECE MODU */
-body.night{
-  background:#0f1c2e;
-}
-
+body.night{background:#0f1c2e;}
 body.night header{background:#14253d;}
-
 body.night .page{
   background:linear-gradient(180deg,#2b2b2b,#1e1e1e);
   color:#f5f5f5;
@@ -30,11 +27,7 @@ body.night .page{
     inset 0 0 120px rgba(0,0,0,.6),
     0 10px 25px rgba(0,0,0,.6);
 }
-
-body.night .admin-btn{
-  background:#ddd;
-  color:#222;
-}
+body.night .admin-btn{background:#ddd;color:#222}
 
 /* 🔐 GİRİŞ */
 #entry{
@@ -43,7 +36,6 @@ body.night .admin-btn{
   justify-content:center;
   align-items:center;
 }
-
 #entry-box{
   background:#fff;
   padding:30px;
@@ -58,18 +50,17 @@ header{
   text-align:center;
   position:relative;
 }
-
 header h1{
   margin:0;
-  font-size:48px;
+  font-family:'Great Vibes', cursive;
+  font-size:64px;
   text-shadow:
-    1px 1px 0 rgba(255,255,255,.9),
-    3px 3px 6px rgba(0,0,0,.35);
+    2px 2px 0 rgba(255,255,255,.85),
+    5px 5px 10px rgba(0,0,0,.35);
 }
-
 header p{
-  margin:5px 0 15px;
-  font-size:28px;
+  margin-top:10px;
+  font-size:32px;
 }
 
 /* BUTONLAR */
@@ -82,7 +73,6 @@ header p{
   border-radius:20px;
   cursor:pointer;
 }
-
 .admin{right:20px;}
 .night-btn{right:160px;}
 
@@ -101,25 +91,26 @@ header p{
 
 /* ŞİİR */
 .poem-title{
-  font-size:56px;
+  font-family:'Great Vibes', cursive;
+  font-size:64px;
   text-align:center;
-  margin-bottom:20px;
+  margin-bottom:25px;
 }
-
 pre{
+  font-family:'Great Vibes', cursive;
   white-space:pre-wrap;
-  font-size:26px;
-  line-height:1.8;
+  font-size:30px;
+  line-height:1.9;
   text-align:center;
 }
-
 .poem-date{
-  margin-top:15px;
+  margin-top:20px;
   font-size:16px;
   opacity:.7;
   text-align:center;
 }
 
+/* YÖNETİCİ */
 .delete-btn{
   margin-top:20px;
   background:#a33;
@@ -129,7 +120,6 @@ pre{
   border-radius:6px;
   cursor:pointer;
 }
-
 #adminPanel{display:none;}
 </style>
 </head>
@@ -180,16 +170,14 @@ const entryPass=document.getElementById("entryPass");
 
 let poems=JSON.parse(localStorage.getItem("poems"))||[];
 
-/* GİRİŞ */
 function enterSite(){
   if(entryPass.value===ENTRY_PASSWORD){
     entry.style.display="none";
     site.style.display="block";
     renderPoems(false);
-  }else alert("Şifre yanlış");
+  } else alert("Şifre yanlış");
 }
 
-/* YÖNETİCİ */
 function showAdmin(){
   const pass=prompt("Yönetici şifresi");
   if(pass===ADMIN_PASSWORD){
@@ -199,12 +187,10 @@ function showAdmin(){
   }
 }
 
-/* GECE MODU */
 function toggleNight(){
   document.body.classList.toggle("night");
 }
 
-/* ŞİİRLER */
 function renderPoems(isAdmin){
   poemsDiv.innerHTML="";
   poems.forEach((p,i)=>{
@@ -221,7 +207,6 @@ function renderPoems(isAdmin){
   localStorage.setItem("poems",JSON.stringify(poems));
 }
 
-/* EKLE */
 function addPoem(){
   if(!titleInput.value||!contentInput.value)return;
   poems.unshift({
@@ -234,7 +219,6 @@ function addPoem(){
   renderPoems(true);
 }
 
-/* SİL */
 function deletePoem(i){
   poems.splice(i,1);
   renderPoems(true);
