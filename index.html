@@ -34,7 +34,12 @@ body.night .page{
   border-radius:12px;
   text-align:center;
 }
-#entry-box input{padding:10px;font-size:18px;}
+#entry-box input, #entry-box textarea{
+  padding:10px;
+  font-size:18px;
+  width:100%;
+  box-sizing:border-box;
+}
 
 header{
   text-align:center;
@@ -137,22 +142,34 @@ header p{font-size:32px;margin:8px 0;}
 const ENTRY_PASSWORD="2808";
 const ADMIN_PASSWORD="0828";
 
-const poemsDiv=document.getElementById("poems");
-let poems=JSON.parse(localStorage.getItem("poems"))||[];
+// Gerekli elementleri seçelim
+const entryPass = document.getElementById("entryPass");
+const entry = document.getElementById("entry");
+const site = document.getElementById("site");
+const adminPanel = document.getElementById("adminPanel");
+const title = document.getElementById("title");
+const content = document.getElementById("content");
+const poemsDiv = document.getElementById("poems");
+
+let poems = JSON.parse(localStorage.getItem("poems")) || [];
 
 function enterSite(){
-  if(entryPass.value===ENTRY_PASSWORD){
-    entry.style.display="none";
-    site.style.display="block";
+  if(entryPass.value === ENTRY_PASSWORD){
+    entry.style.display = "none";
+    site.style.display = "block";
     renderPoems(false);
-  }else alert("Şifre yanlış");
+  } else {
+    alert("Şifre yanlış");
+  }
 }
 
 function showAdmin(){
-  const p=prompt("Yönetici şifresi");
-  if(p===ADMIN_PASSWORD){
-    adminPanel.style.display="block";
+  const p = prompt("Yönetici şifresi");
+  if(p === ADMIN_PASSWORD){
+    adminPanel.style.display = "block";
     renderPoems(true);
+  } else {
+    alert("Yönetici şifresi yanlış");
   }
 }
 
@@ -161,35 +178,35 @@ function toggleNight(){
 }
 
 function renderPoems(admin){
-  poemsDiv.innerHTML="";
-  poems.forEach((p,i)=>{
-    const d=document.createElement("div");
-    d.className="page";
-    d.innerHTML=`
+  poemsDiv.innerHTML = "";
+  poems.forEach((p, i) => {
+    const d = document.createElement("div");
+    d.className = "page";
+    d.innerHTML = `
       <div class="poem-title">${p.title}</div>
       <div class="poem-content">${p.content}</div>
       <div class="poem-date">${p.date}</div>
-      ${admin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:""}
+      ${admin ? `<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>` : ""}
     `;
     poemsDiv.appendChild(d);
   });
-  localStorage.setItem("poems",JSON.stringify(poems));
+  localStorage.setItem("poems", JSON.stringify(poems));
 }
 
 function addPoem(){
-  if(!title.value||!content.value)return;
+  if(!title.value || !content.value) return;
   poems.unshift({
-    title:title.value,
-    content:content.value,
-    date:new Date().toLocaleString("tr-TR")
+    title: title.value,
+    content: content.value,
+    date: new Date().toLocaleString("tr-TR")
   });
-  title.value="";
-  content.value="";
+  title.value = "";
+  content.value = "";
   renderPoems(true);
 }
 
 function deletePoem(i){
-  poems.splice(i,1);
+  poems.splice(i, 1);
   renderPoems(true);
 }
 </script>
