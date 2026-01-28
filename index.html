@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Şiir Defterim</title>
 
-<!-- EL YAZISI FONTU -->
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -13,148 +12,121 @@ body{
   margin:0;
   font-family:'Dancing Script', cursive;
   background:#87ceeb;
-  transition:background .4s;
+  transition:.4s;
 }
 
-/* 🌙 GECE MODU */
-body.night{
-  background:#0f1c2e;
-}
-body.night header{background:#14253d}
+body.night{background:#0f1c2e;}
+body.night header{background:#14253d;}
 body.night .page{
-  background:linear-gradient(#2b2b2b,#1e1e1e);
+  background:#1e1e1e;
   color:#f5f5f5;
-  box-shadow:inset 0 0 60px rgba(0,0,0,.8);
 }
 
-/* GİRİŞ */
 #entry{
-  min-height:100vh;
+  height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
 }
 #entry-box{
-  background:white;
+  background:#fff;
   padding:30px;
   border-radius:12px;
   text-align:center;
-  box-shadow:0 10px 25px rgba(0,0,0,.25);
 }
-#entry-box input{
-  padding:10px;
-  font-size:18px;
-  margin-bottom:10px;
-}
+#entry-box input{padding:10px;font-size:18px;}
 
-/* BAŞLIK */
 header{
-  background:#87ceeb;
-  padding:25px;
   text-align:center;
+  padding:25px;
   position:relative;
 }
 header h1{
-  font-size:52px;
+  font-size:60px;
   margin:0;
   text-shadow:
-    1px 1px 0 #fff,
-    3px 3px 6px rgba(0,0,0,.35);
+    2px 2px 0 #fff,
+    4px 4px 8px rgba(0,0,0,.4);
 }
-header p{
-  font-size:30px;
-  margin:5px 0 15px;
-}
+header p{font-size:32px;margin:8px 0;}
 
-/* BUTONLAR */
 .btn{
   position:absolute;
   top:20px;
   padding:8px 18px;
+  background:#3b2f2f;
+  color:#fff;
   border-radius:20px;
   cursor:pointer;
-  background:#3b2f2f;
-  color:white;
 }
-.admin{right:20px}
-.night-btn{right:150px}
+.admin{right:20px;}
+.night-btn{right:150px;}
 
-/* SAYFA */
 .page{
-  max-width:780px;
+  max-width:800px;
   margin:60px auto;
   padding:50px;
-  background:linear-gradient(#f8e7b1,#f4dea0);
+  background:#f4dea0;
   border-radius:14px;
-  box-shadow:
-    inset 0 0 60px rgba(90,45,10,.5),
-    0 10px 25px rgba(0,0,0,.25);
+  box-shadow:inset 0 0 60px rgba(90,45,10,.5);
 }
 
-/* ŞİİR */
 .poem-title{
-  font-size:56px;
+  font-size:60px;
   text-align:center;
   margin-bottom:25px;
-  font-weight:600;
 }
-
 .poem-content{
-  font-size:30px;
+  font-size:32px;
   line-height:2;
   text-align:center;
   white-space:pre-wrap;
 }
-
 .poem-date{
   margin-top:20px;
   font-size:16px;
-  opacity:.7;
   text-align:center;
+  opacity:.7;
 }
 
 .delete-btn{
   display:block;
   margin:25px auto 0;
-  padding:8px 16px;
-  border:none;
-  border-radius:6px;
   background:#a33;
-  color:white;
+  color:#fff;
+  border:none;
+  padding:8px 18px;
+  border-radius:8px;
   cursor:pointer;
 }
 
-#adminPanel{display:none}
+#adminPanel{display:none;}
 </style>
 </head>
 
 <body>
 
-<!-- GİRİŞ -->
 <div id="entry">
   <div id="entry-box">
     <h2>Bu defter kilitli</h2>
     <input type="password" id="entryPass" placeholder="Şifre">
-    <br>
+    <br><br>
     <button onclick="enterSite()">Giriş</button>
   </div>
 </div>
 
-<!-- SİTE -->
 <div id="site" style="display:none">
-
 <header>
   <h1>Şiir Defterim</h1>
   <p>Kalbimden Sana Sevgilim</p>
-
   <div class="btn night-btn" onclick="toggleNight()">🌙</div>
   <div class="btn admin" onclick="showAdmin()">Yönetici</div>
 </header>
 
 <div id="adminPanel" class="page">
-  <h2>Yeni Şiir Ekle</h2>
+  <h2>Yeni Şiir</h2>
   <input id="title" placeholder="Şiir başlığı"><br><br>
-  <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea><br><br>
+  <textarea id="content" rows="6" placeholder="Şiir..."></textarea><br><br>
   <button onclick="addPoem()">Ekle</button>
 </div>
 
@@ -164,6 +136,8 @@ header p{
 <script>
 const ENTRY_PASSWORD="2808";
 const ADMIN_PASSWORD="0828";
+
+const poemsDiv=document.getElementById("poems");
 let poems=JSON.parse(localStorage.getItem("poems"))||[];
 
 function enterSite(){
@@ -175,8 +149,8 @@ function enterSite(){
 }
 
 function showAdmin(){
-  const pass=prompt("Yönetici şifresi");
-  if(pass===ADMIN_PASSWORD){
+  const p=prompt("Yönetici şifresi");
+  if(p===ADMIN_PASSWORD){
     adminPanel.style.display="block";
     renderPoems(true);
   }
@@ -186,18 +160,18 @@ function toggleNight(){
   document.body.classList.toggle("night");
 }
 
-function renderPoems(isAdmin){
+function renderPoems(admin){
   poemsDiv.innerHTML="";
   poems.forEach((p,i)=>{
-    const page=document.createElement("div");
-    page.className="page";
-    page.innerHTML=`
+    const d=document.createElement("div");
+    d.className="page";
+    d.innerHTML=`
       <div class="poem-title">${p.title}</div>
       <div class="poem-content">${p.content}</div>
       <div class="poem-date">${p.date}</div>
-      ${isAdmin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:""}
+      ${admin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:""}
     `;
-    poemsDiv.appendChild(page);
+    poemsDiv.appendChild(d);
   });
   localStorage.setItem("poems",JSON.stringify(poems));
 }
