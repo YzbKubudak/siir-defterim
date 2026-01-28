@@ -52,6 +52,30 @@ header p{
     0 0 2px #ffffff,
     0 0 6px rgba(255,255,255,0.7);
 }
+/* 📱 SADECE MOBİL AYARLARI */
+@media (max-width: 768px){
+
+  /* Başlık küçült */
+  header h1{
+    font-size:56px;
+  }
+
+  /* Alt yazı küçült */
+  header p{
+    font-size:26px;
+  }
+
+  /* Butonları mobilde alt alta al */
+  .admin-btn.admin{
+    top:20px;
+    right:20px;
+  }
+
+  .admin-btn.night-btn{
+    top:70px; /* yönetici butonunun altı */
+    right:20px;
+  }
+}
 
 #entry{
   min-height:100vh;
