@@ -12,7 +12,7 @@ body{
   margin:0;
   font-family:'Dancing Script', cursive;
   background:#87ceeb;
-  transition: background 0.4s;
+  transition: background .4s;
 }
 
 /* 🌙 GECE MODU */
@@ -20,9 +20,7 @@ body.night{
   background:#0f1c2e;
 }
 
-body.night header{
-  background:#14253d;
-}
+body.night header{background:#14253d;}
 
 body.night .page{
   background:linear-gradient(180deg,#2b2b2b,#1e1e1e);
@@ -38,17 +36,16 @@ body.night .admin-btn{
   color:#222;
 }
 
-/* GİRİŞ */
+/* 🔐 GİRİŞ */
 #entry{
   min-height:100vh;
   display:flex;
-  align-items:center;
   justify-content:center;
-  background:#87ceeb;
+  align-items:center;
 }
 
 #entry-box{
-  background:white;
+  background:#fff;
   padding:30px;
   border-radius:12px;
   box-shadow:0 10px 25px rgba(0,0,0,.25);
@@ -57,7 +54,6 @@ body.night .admin-btn{
 
 /* BAŞLIK */
 header{
-  background:#87ceeb;
   padding:25px;
   text-align:center;
   position:relative;
@@ -67,17 +63,13 @@ header h1{
   margin:0;
   font-size:48px;
   text-shadow:
-    1px 1px 0 rgba(255,255,255,0.85),
-    2px 2px 2px rgba(255,255,255,0.6),
-    4px 4px 8px rgba(0,0,0,0.35);
+    1px 1px 0 rgba(255,255,255,.9),
+    3px 3px 6px rgba(0,0,0,.35);
 }
 
 header p{
   margin:5px 0 15px;
   font-size:28px;
-  text-shadow:
-    1px 1px 0 rgba(255,255,255,0.8),
-    3px 3px 6px rgba(0,0,0,0.3);
 }
 
 /* BUTONLAR */
@@ -86,20 +78,15 @@ header p{
   top:20px;
   padding:8px 18px;
   background:#3b2f2f;
-  color:white;
+  color:#fff;
   border-radius:20px;
   cursor:pointer;
 }
 
-.admin-btn.admin{
-  right:20px;
-}
+.admin{right:20px;}
+.night-btn{right:160px;}
 
-.admin-btn.night-btn{
-  right:160px;
-}
-
-/* SAYFA – YANIK */
+/* SAYFA */
 .page{
   max-width:780px;
   margin:60px auto;
@@ -114,15 +101,14 @@ header p{
 
 /* ŞİİR */
 .poem-title{
-  font-size:56px; /* 2 kat */
+  font-size:56px;
   text-align:center;
   margin-bottom:20px;
 }
 
 pre{
-  font-family:'Dancing Script', cursive;
   white-space:pre-wrap;
-  font-size:26px; /* büyütüldü */
+  font-size:26px;
   line-height:1.8;
   text-align:center;
 }
@@ -137,27 +123,30 @@ pre{
 .delete-btn{
   margin-top:20px;
   background:#a33;
-  color:white;
+  color:#fff;
   border:none;
   padding:8px 14px;
   border-radius:6px;
   cursor:pointer;
 }
 
-#adminPanel{display:none}
+#adminPanel{display:none;}
 </style>
 </head>
 
 <body>
 
+<!-- GİRİŞ -->
 <div id="entry">
   <div id="entry-box">
     <h2>Bu defter kilitli</h2>
-    <input type="password" id="entryPass" placeholder="Şifre" />
+    <input type="password" id="entryPass" placeholder="Şifre">
+    <br><br>
     <button onclick="enterSite()">Giriş</button>
   </div>
 </div>
 
+<!-- SİTE -->
 <div id="site" style="display:none;">
 <header>
   <h1>Şiir Defterim</h1>
@@ -169,8 +158,8 @@ pre{
 
 <div id="adminPanel" class="page">
   <h2>Yeni Şiir Ekle</h2>
-  <input id="title" placeholder="Şiir başlığı" />
-  <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea>
+  <input id="title" placeholder="Şiir başlığı"><br><br>
+  <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea><br><br>
   <button onclick="addPoem()">Ekle</button>
 </div>
 
@@ -178,58 +167,74 @@ pre{
 </div>
 
 <script>
-const ENTRY_PASSWORD='2808';
-const ADMIN_PASSWORD='0828';
-let poems=JSON.parse(localStorage.getItem('poems'))||[];
+const ENTRY_PASSWORD="2808";
+const ADMIN_PASSWORD="0828";
 
+const entry=document.getElementById("entry");
+const site=document.getElementById("site");
+const adminPanel=document.getElementById("adminPanel");
+const poemsDiv=document.getElementById("poems");
+const titleInput=document.getElementById("title");
+const contentInput=document.getElementById("content");
+const entryPass=document.getElementById("entryPass");
+
+let poems=JSON.parse(localStorage.getItem("poems"))||[];
+
+/* GİRİŞ */
 function enterSite(){
   if(entryPass.value===ENTRY_PASSWORD){
-    entry.style.display='none';
-    site.style.display='block';
+    entry.style.display="none";
+    site.style.display="block";
     renderPoems(false);
-  }else alert('Şifre yanlış');
+  }else alert("Şifre yanlış");
 }
 
+/* YÖNETİCİ */
 function showAdmin(){
-  const pass=prompt('Yönetici şifresi');
+  const pass=prompt("Yönetici şifresi");
   if(pass===ADMIN_PASSWORD){
-    adminPanel.style.display='block';
+    adminPanel.style.display=
+      adminPanel.style.display==="none"?"block":"none";
     renderPoems(true);
   }
 }
 
+/* GECE MODU */
 function toggleNight(){
-  document.body.classList.toggle('night');
+  document.body.classList.toggle("night");
 }
 
+/* ŞİİRLER */
 function renderPoems(isAdmin){
-  poemsDiv=document.getElementById('poems');
-  poemsDiv.innerHTML='';
+  poemsDiv.innerHTML="";
   poems.forEach((p,i)=>{
-    const page=document.createElement('div');
-    page.className='page';
+    const page=document.createElement("div");
+    page.className="page";
     page.innerHTML=`
       <div class="poem-title">${p.title}</div>
       <pre>${p.content}</pre>
-      <div class="poem-date">${p.date || ''}</div>
-      ${isAdmin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:''}
+      <div class="poem-date">${p.date}</div>
+      ${isAdmin?`<button class="delete-btn" onclick="deletePoem(${i})">Sil</button>`:""}
     `;
     poemsDiv.appendChild(page);
   });
-  localStorage.setItem('poems',JSON.stringify(poems));
+  localStorage.setItem("poems",JSON.stringify(poems));
 }
 
+/* EKLE */
 function addPoem(){
-  if(!title.value||!content.value)return;
+  if(!titleInput.value||!contentInput.value)return;
   poems.unshift({
-    title:title.value,
-    content:content.value,
-    date:new Date().toLocaleString('tr-TR')
+    title:titleInput.value,
+    content:contentInput.value,
+    date:new Date().toLocaleString("tr-TR")
   });
-  title.value='';content.value='';
+  titleInput.value="";
+  contentInput.value="";
   renderPoems(true);
 }
 
+/* SİL */
 function deletePoem(i){
   poems.splice(i,1);
   renderPoems(true);
