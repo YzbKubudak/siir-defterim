@@ -1,3 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Şiir Defterim</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Dancing Script', cursive;
+  background:#87ceeb;
+}
+
+body.night{background:#0f1c2e;}
+
+#entry{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#entry-box{
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  text-align:center;
+}
+
+header{
+  background:#87ceeb;
+  padding:25px;
+  text-align:center;
+  position:relative;
+}
+
+.admin-btn{
+  position:absolute;
+  top:20px;
+  padding:8px 18px;
+  background:#3b2f2f;
+  color:white;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+.admin{right:20px;}
+.night-btn{right:140px;}
+
+.page{
+  max-width:780px;
+  margin:60px auto;
+  padding:50px;
+  background:linear-gradient(180deg,#f8e7b1,#f4dea0);
+  border-radius:14px;
+}
+
+.poem-title{
+  font-size:48px;
+  text-align:center;
+}
+
+pre{
+  white-space:pre-wrap;
+  font-size:26px;
+  text-align:center;
+}
+
+.delete-btn{
+  margin-top:20px;
+  background:#a33;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+#adminPanel{display:none}
+</style>
+</head>
+
+<body>
+
+<div id="entry">
+  <div id="entry-box">
+    <h2>Bu defter kilitli</h2>
+    <input type="password" id="entryPass" placeholder="Şifre">
+    <button onclick="enterSite()">Giriş</button>
+  </div>
+</div>
+
+<div id="site" style="display:none;">
+<header>
+  <h1>Şiir Defterim</h1>
+  <p>Kalbimden Sana</p>
+
+  <div class="admin-btn night-btn" onclick="toggleNight()">🌙</div>
+  <div class="admin-btn admin" onclick="showAdmin()">Yönetici</div>
+</header>
+
+<div id="adminPanel" class="page">
+  <h2>Yeni Şiir Ekle</h2>
+  <input id="title" placeholder="Şiir başlığı"><br><br>
+  <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea><br><br>
+  <button onclick="addPoem()">Ekle</button>
+</div>
+
+<div id="poems"></div>
+</div>
+
+<!-- 🔥 FIREBASE + JS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import {
@@ -11,6 +126,11 @@ import {
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
+/* 🔐 ŞİFRELER */
+const ENTRY_PASSWORD = "2808";
+const ADMIN_PASSWORD = "0828";
+
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyDk_hyA2kEsJZhOOFzmsdiTsdWwptpMGNc",
   authDomain: "siir-defteri.firebaseapp.com",
@@ -23,54 +143,65 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 ŞİİRLERİ YÜKLE
-window.renderPoems = async function(isAdmin=false){
-  const poemsDiv = document.getElementById('poems');
-  poemsDiv.innerHTML='';
+/* 🌐 GLOBAL FONKSİYONLAR */
+window.enterSite = function(){
+  if(entryPass.value === ENTRY_PASSWORD){
+    entry.style.display="none";
+    site.style.display="block";
+    renderPoems(false);
+  } else alert("Şifre yanlış");
+}
 
+window.showAdmin = function(){
+  const pass = prompt("Yönetici şifresi");
+  if(pass === ADMIN_PASSWORD){
+    adminPanel.style.display="block";
+    renderPoems(true);
+  }
+}
+
+window.toggleNight = function(){
+  document.body.classList.toggle("night");
+}
+
+window.renderPoems = async function(isAdmin){
+  poems.innerHTML="";
   const q = query(collection(db,"poems"), orderBy("date","desc"));
   const snap = await getDocs(q);
 
   snap.forEach(d=>{
     const p = d.data();
-    const page=document.createElement('div');
-    page.className='page';
-    page.innerHTML=`
+    const div = document.createElement("div");
+    div.className="page";
+    div.innerHTML=`
       <div class="poem-title">${p.title}</div>
       <pre>${p.content}</pre>
-      <div class="poem-date">
-        ${p.date?.seconds ? new Date(p.date.seconds*1000).toLocaleString('tr-TR') : ''}
+      <div style="text-align:center;opacity:.6">
+        ${new Date(p.date.seconds*1000).toLocaleString("tr-TR")}
       </div>
-      ${isAdmin?`<button class="delete-btn" onclick="deletePoem('${d.id}')">Sil</button>`:''}
+      ${isAdmin ? `<button class="delete-btn" onclick="deletePoem('${d.id}')">Sil</button>` : ""}
     `;
-    poemsDiv.appendChild(page);
+    poems.appendChild(div);
   });
 }
 
-// 🔥 EKLE
 window.addPoem = async function(){
-  if(!title.value||!content.value) return;
+  if(!title.value || !content.value) return;
   await addDoc(collection(db,"poems"),{
     title:title.value,
     content:content.value,
     date:new Date()
   });
-  title.value='';
-  content.value='';
+  title.value="";
+  content.value="";
   renderPoems(true);
 }
 
-// 🔥 SİL
 window.deletePoem = async function(id){
   await deleteDoc(doc(db,"poems",id));
   renderPoems(true);
 }
 </script>
-<div id="poems"></div>
 
-<script type="module">
-  // firebase kodları
-</script>
 </body>
 </html>
-
