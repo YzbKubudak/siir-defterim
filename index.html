@@ -8,119 +8,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-  *{
-  font-family: 'Dancing Script', cursive !important;
+/* 🔤 FONT */
+body, button, input, textarea, h1, h2, h3, p, pre, div{
+  font-family: 'Dancing Script', cursive;
 }
+
 body{
   margin:0;
-  font-family:'Dancing Script', cursive;
   background:#87ceeb;
+  transition:background .4s;
 }
 
-body.night{background:#0f1c2e;}
-  input, textarea, button{
-  font-family: 'Dancing Script', cursive;
-  font-size: 22px;
-}
-/* 🌟 NEON BAŞLIK */
-header h1{
-  font-size:96px; /* 2 kat */
-  color:#ffffff;
-  text-shadow:
-    0 0 5px rgba(255,255,255,0.9),
-    0 0 10px rgba(255,255,255,0.8),
-    0 0 20px rgba(255,255,255,0.7),
-    0 0 40px rgba(255,255,255,0.6),
-    0 0 80px rgba(255,255,255,0.5);
-}
-/* 🖋️ IŞIKLI BAŞLIK */
-header h1{
-  font-size:96px;
-  color:#111; /* siyah yazı */
-  font-weight:600;
-  letter-spacing:1px;
-  text-shadow:
-    0 0 2px #ffffff,
-    0 0 6px #ffffff,
-    0 0 12px rgba(255,255,255,0.8),
-    2px 2px 4px rgba(0,0,0,0.35);
-}
-header p{
-  font-size:38px;
-  color:#111;
-  text-shadow:
-    0 0 2px #ffffff,
-    0 0 6px rgba(255,255,255,0.7);
-}
-/* 📱 SADECE MOBİL AYARLARI */
-@media (max-width: 768px){
-
-  /* Başlık küçült */
-  header h1{
-    font-size:56px;
-  }
-
-  /* Alt yazı küçült */
-  header p{
-    font-size:26px;
-  }
-
-}
-/* 📱 SADECE MOBİL – ZORLA UYGULA */
-@media screen and (max-width: 768px){
-
-  header h1{
-    font-size:56px !important;
-  }
-
-  header p{
-    font-size:26px !important;
-  }
-}
-/* 🌙 GECE MODU – BAŞLIK VE DEFTER */
-body.night header{
+/* 🌙 GECE MODU */
+body.night{
   background:#0f1c2e;
 }
 
-body.night header h1,
-body.night header p{
-  color:#f5f5f5;
-  text-shadow:
-    0 0 6px rgba(255,255,255,0.5),
-    0 0 12px rgba(120,170,255,0.6);
-}
-
-body.night .page{
-  background:linear-gradient(180deg,#1b1b1b,#121212);
-  color:#f0f0f0;
-  box-shadow:
-    inset 0 0 60px rgba(0,0,0,.8),
-    inset 0 0 120px rgba(0,0,0,.6),
-    0 10px 25px rgba(0,0,0,.6);
-}
-/* 🌙 GECE MODU – ZORLA KARARTMA */
-body.night header{
-  background:#0b1626 !important;
-}
-
-body.night header h1,
-body.night header p{
-  color:#f2f2f2 !important;
-  text-shadow:
-    0 0 6px rgba(255,255,255,0.4),
-    0 0 14px rgba(120,170,255,0.5) !important;
-}
-
-/* şiir sayfaları */
-body.night .page{
-  background:linear-gradient(180deg,#161616,#0e0e0e) !important;
-  color:#f0f0f0 !important;
-  box-shadow:
-    inset 0 0 80px rgba(0,0,0,.85),
-    inset 0 0 140px rgba(0,0,0,.7),
-    0 10px 30px rgba(0,0,0,.7) !important;
-}
-
+/* 🔐 GİRİŞ */
 #entry{
   min-height:100vh;
   display:flex;
@@ -135,6 +39,7 @@ body.night .page{
   text-align:center;
 }
 
+/* 🏷️ BAŞLIK */
 header{
   background:#87ceeb;
   padding:25px;
@@ -142,6 +47,40 @@ header{
   position:relative;
 }
 
+header h1{
+  font-size:96px;
+  color:#111;
+  font-weight:600;
+  letter-spacing:1px;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 6px #fff,
+    0 0 12px rgba(255,255,255,.8),
+    2px 2px 4px rgba(0,0,0,.35);
+}
+
+header p{
+  font-size:38px;
+  color:#111;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 6px rgba(255,255,255,.7);
+}
+
+/* 🌙 GECE MODU – BAŞLIK */
+body.night header{
+  background:#0b1626;
+}
+
+body.night header h1,
+body.night header p{
+  color:#f2f2f2;
+  text-shadow:
+    0 0 6px rgba(255,255,255,.4),
+    0 0 14px rgba(120,170,255,.5);
+}
+
+/* 🔘 BUTONLAR */
 .admin-btn{
   position:absolute;
   top:20px;
@@ -152,17 +91,29 @@ header{
   cursor:pointer;
 }
 
-.admin{right:20px;}
-.night-btn{right:140px;}
+.admin{ right:20px; }
+.night-btn{ right:140px; }
 
+/* 📜 SAYFA */
 .page{
   max-width:780px;
   margin:60px auto;
   padding:50px;
   background:linear-gradient(180deg,#f8e7b1,#f4dea0);
   border-radius:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
 }
 
+body.night .page{
+  background:linear-gradient(180deg,#161616,#0e0e0e);
+  color:#f0f0f0;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,.85),
+    inset 0 0 140px rgba(0,0,0,.7),
+    0 10px 30px rgba(0,0,0,.7);
+}
+
+/* ✍️ ŞİİR */
 .poem-title{
   font-size:48px;
   text-align:center;
@@ -174,6 +125,7 @@ pre{
   text-align:center;
 }
 
+/* 🗑️ SİL */
 .delete-btn{
   margin-top:20px;
   background:#a33;
@@ -184,7 +136,18 @@ pre{
   cursor:pointer;
 }
 
-#adminPanel{display:none}
+/* 🛠️ ADMIN */
+#adminPanel{display:none;}
+
+input, textarea, button{
+  font-size:22px;
+}
+
+/* 📱 MOBİL */
+@media (max-width:768px){
+  header h1{ font-size:56px; }
+  header p{ font-size:26px; }
+}
 </style>
 </head>
 
@@ -194,6 +157,7 @@ pre{
   <div id="entry-box">
     <h2>Bu defter kilitli</h2>
     <input type="password" id="entryPass" placeholder="Şifre">
+    <br><br>
     <button onclick="enterSite()">Giriş</button>
   </div>
 </div>
@@ -217,25 +181,17 @@ pre{
 <div id="poems"></div>
 </div>
 
-<!-- 🔥 FIREBASE + JS -->
+<!-- 🔥 FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  query,
-  orderBy
+  getFirestore, collection, addDoc, getDocs,
+  deleteDoc, doc, query, orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-/* 🔐 ŞİFRELER */
 const ENTRY_PASSWORD = "2808";
 const ADMIN_PASSWORD = "0828";
 
-/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyDk_hyA2kEsJZhOOFzmsdiTsdWwptpMGNc",
   authDomain: "siir-defteri.firebaseapp.com",
@@ -248,9 +204,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🌐 GLOBAL FONKSİYONLAR */
+/* 🌙 GECE MODU HATIRLAMA */
+if(localStorage.getItem("nightMode")==="true"){
+  document.body.classList.add("night");
+}
+
+window.toggleNight = function(){
+  document.body.classList.toggle("night");
+  localStorage.setItem("nightMode",
+    document.body.classList.contains("night"));
+}
+
 window.enterSite = function(){
-  if(entryPass.value === ENTRY_PASSWORD){
+  if(entryPass.value===ENTRY_PASSWORD){
     entry.style.display="none";
     site.style.display="block";
     renderPoems(false);
@@ -259,14 +225,10 @@ window.enterSite = function(){
 
 window.showAdmin = function(){
   const pass = prompt("Yönetici şifresi");
-  if(pass === ADMIN_PASSWORD){
+  if(pass===ADMIN_PASSWORD){
     adminPanel.style.display="block";
     renderPoems(true);
   }
-}
-
-window.toggleNight = function(){
-  document.body.classList.toggle("night");
 }
 
 window.renderPoems = async function(isAdmin){
