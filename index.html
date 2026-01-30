@@ -90,6 +90,26 @@ pre{
   border-radius:6px;
   cursor:pointer;
 }
+body.night header{
+  background:#0b1626;
+}
+
+body.night header h1,
+body.night header p{
+  color:#f2f2f2;
+  text-shadow:
+    0 0 6px rgba(255,255,255,.4),
+    0 0 14px rgba(120,170,255,.5);
+}
+
+body.night .page{
+  background:linear-gradient(180deg,#161616,#0e0e0e);
+  color:#f0f0f0;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,.85),
+    inset 0 0 140px rgba(0,0,0,.7),
+    0 10px 30px rgba(0,0,0,.7);
+}
 
 #adminPanel{ display:none; }
 
@@ -159,12 +179,20 @@ const firebaseConfig = {
   messagingSenderId: "568234838204",
   appId: "1:568234838204:web:76c1f3d7f69ba5e32968b9"
 };
+// 🌙 GECE MODU HATIRLAMA
+if(localStorage.getItem("nightMode")==="true"){
+  document.body.classList.add("night");
+}
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.toggleNight = function(){
   document.body.classList.toggle("night");
+  localStorage.setItem(
+    "nightMode",
+    document.body.classList.contains("night")
+  );
 }
 
 window.enterSite = function(){
