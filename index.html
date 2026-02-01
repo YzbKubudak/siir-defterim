@@ -20,19 +20,6 @@ body{
 
 body.night{ background:#0f1c2e; }
 
-#deleteSairBtn{ display:none; }
-
-.sair-btn{
-  display:inline-block;
-  margin:10px;
-  padding:10px 18px;
-  background:#3b2f2f;
-  color:white;
-  border-radius:20px;
-  cursor:pointer;
-  font-size:22px;
-}
-
 #entry{
   min-height:100vh;
   display:flex;
@@ -109,7 +96,19 @@ pre{
   cursor:pointer;
 }
 
+.sair-btn{
+  display:inline-block;
+  margin:10px;
+  padding:10px 18px;
+  background:#3b2f2f;
+  color:white;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:22px;
+}
+
 #adminPanel{ display:none; }
+#deleteSairBtn{ display:none; }
 
 @media (max-width:768px){
   header h1{ font-size:56px; }
@@ -119,6 +118,7 @@ pre{
 
 <body>
 
+<!-- 🔐 GİRİŞ -->
 <div id="entry">
   <div id="entry-box">
     <h2>Bu defter kilitli</h2>
@@ -136,6 +136,7 @@ pre{
   <div class="admin-btn admin" onclick="showAdmin()">Yönetici</div>
 </header>
 
+<!-- 🧑‍💼 ADMIN -->
 <div id="adminPanel" class="page">
   <h2>Yeni Şiir Ekle</h2>
 
@@ -158,6 +159,7 @@ pre{
   </button>
 </div>
 
+<!-- 📜 ŞAİRLER -->
 <div id="sairler" class="page">
   <h2 style="text-align:center;">📜 Şairler</h2>
   <div id="sairList" style="text-align:center;"></div>
@@ -166,6 +168,7 @@ pre{
 <div id="poems"></div>
 </div>
 
+<!-- 🔥 JAVASCRIPT -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import {
@@ -173,64 +176,82 @@ import {
   deleteDoc, doc, query, orderBy, setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-const ENTRY_PASSWORD="2808";
-const ADMIN_PASSWORD="0828";
+/* 🔐 ŞİFRELER */
+const ENTRY_PASSWORD = "2808";
+const ADMIN_PASSWORD = "0828";
 
-const firebaseConfig={ /* senin config */ };
+/* 🔥 FIREBASE CONFIG (GİRİŞ SORUNUNU ÇÖZEN KISIM) */
+const firebaseConfig = {
+  apiKey: "AIzaSyDk_hyA2kEsJZhOOFzmsdiTsdWwptpMGNc",
+  authDomain: "siir-defteri.firebaseapp.com",
+  projectId: "siir-defteri",
+  storageBucket: "siir-defteri.firebasestorage.app",
+  messagingSenderId: "568234838204",
+  appId: "1:568234838204:web:76c1f3d7f69ba5e32968b9"
+};
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
+/* 🌙 GECE MODU */
 if(localStorage.getItem("nightMode")==="true"){
   document.body.classList.add("night");
 }
 
-window.toggleNight=()=>{
+window.toggleNight = ()=>{
   document.body.classList.toggle("night");
   localStorage.setItem("nightMode",
     document.body.classList.contains("night"));
-}
+};
 
-window.enterSite=()=>{
-  if(entryPass.value===ENTRY_PASSWORD){
+/* 🔐 GİRİŞ */
+window.enterSite = ()=>{
+  if(entryPass.value === ENTRY_PASSWORD){
     entry.style.display="none";
     site.style.display="block";
     loadSairler(false);
-  } else alert("Şifre yanlış");
-}
+  } else {
+    alert("Şifre yanlış");
+  }
+};
 
-window.showAdmin=()=>{
-  if(prompt("Yönetici şifresi")===ADMIN_PASSWORD){
+/* 🧑‍💼 ADMIN */
+window.showAdmin = ()=>{
+  if(prompt("Yönetici şifresi") === ADMIN_PASSWORD){
     adminPanel.style.display="block";
-    document.getElementById("deleteSairBtn").style.display="inline-block";
+    deleteSairBtn.style.display="inline-block";
     loadSairler(true);
   }
-}
+};
 
-window.loadSairler=async(isAdmin)=>{
+/* 📜 ŞAİRLER */
+window.loadSairler = async (isAdmin)=>{
   sairList.innerHTML="";
   sairSelect.innerHTML="";
 
-  const snap=await getDocs(collection(db,"sairler"));
+  const snap = await getDocs(collection(db,"sairler"));
   snap.forEach(d=>{
-    const btn=document.createElement("div");
+    const name = d.data().name;
+
+    const btn = document.createElement("div");
     btn.className="sair-btn";
-    btn.textContent=d.data().name;
+    btn.textContent=name;
     btn.onclick=()=>loadPoemsOfSair(d.id,isAdmin);
     sairList.appendChild(btn);
 
     if(isAdmin){
       const opt=document.createElement("option");
       opt.value=d.id;
-      opt.textContent=d.data().name;
+      opt.textContent=name;
       sairSelect.appendChild(opt);
     }
   });
-}
+};
 
-window.loadPoemsOfSair=async(sairId,isAdmin)=>{
+/* ✍️ ŞİİRLER */
+window.loadPoemsOfSair = async (sairId,isAdmin)=>{
   poems.innerHTML="";
-  const snap=await getDocs(
+  const snap = await getDocs(
     query(collection(db,"sairler",sairId,"poems"),orderBy("date","desc"))
   );
 
@@ -244,39 +265,42 @@ window.loadPoemsOfSair=async(sairId,isAdmin)=>{
         onclick="deletePoem('${sairId}','${d.id}')">Sil</button>`:""}
       </div>`;
   });
-}
+};
 
-window.addSair=async()=>{
-  if(!sairName.value)return;
+window.addSair = async ()=>{
+  if(!sairName.value) return;
   const id=sairName.value.toLowerCase().replace(/\s+/g,"-");
   await setDoc(doc(db,"sairler",id),{name:sairName.value});
   sairName.value="";
   loadSairler(true);
-}
+};
 
-window.addPoem=async()=>{
-  if(!sairSelect.value||!title.value||!content.value)return;
+window.addPoem = async ()=>{
+  if(!sairSelect.value||!title.value||!content.value) return;
   await addDoc(collection(db,"sairler",sairSelect.value,"poems"),{
-    title:title.value,content:content.value,date:new Date()
+    title:title.value,
+    content:content.value,
+    date:new Date()
   });
-  title.value="";content.value="";
+  title.value="";
+  content.value="";
   loadPoemsOfSair(sairSelect.value,true);
-}
+};
 
-window.deletePoem=async(sairId,id)=>{
+window.deletePoem = async (sairId,id)=>{
   await deleteDoc(doc(db,"sairler",sairId,"poems",id));
   loadPoemsOfSair(sairId,true);
-}
+};
 
-window.deleteSair=async()=>{
-  if(!confirm("Şair ve tüm şiirleri silinsin mi?"))return;
+window.deleteSair = async ()=>{
+  if(!confirm("Şair ve tüm şiirleri silinsin mi?")) return;
   const id=sairSelect.value;
   const snap=await getDocs(collection(db,"sairler",id,"poems"));
   for(const d of snap.docs){ await deleteDoc(d.ref); }
   await deleteDoc(doc(db,"sairler",id));
   poems.innerHTML="";
   loadSairler(true);
-}
+};
 </script>
 
 </body>
