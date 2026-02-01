@@ -19,6 +19,9 @@ body{
 }
 
 body.night{ background:#0f1c2e; }
+
+#deleteSairBtn{ display:none; }
+
 .sair-btn{
   display:inline-block;
   margin:10px;
@@ -51,11 +54,7 @@ header{
   position:relative;
 }
 
-header h1{
-  font-size:96px;
-  text-shadow:2px 2px 4px rgba(0,0,0,.35);
-}
-
+header h1{ font-size:96px; }
 header p{ font-size:38px; }
 
 .admin-btn{
@@ -80,6 +79,15 @@ header p{ font-size:38px; }
   box-shadow:0 10px 25px rgba(0,0,0,.25);
 }
 
+body.night header{ background:#0b1626; }
+body.night header h1,
+body.night header p{ color:#f2f2f2; }
+
+body.night .page{
+  background:#111;
+  color:#f0f0f0;
+}
+
 .poem-title{
   font-size:48px;
   text-align:center;
@@ -100,34 +108,11 @@ pre{
   border-radius:6px;
   cursor:pointer;
 }
-body.night header{
-  background:#0b1626;
-}
-
-body.night header h1,
-body.night header p{
-  color:#f2f2f2;
-  text-shadow:
-    0 0 6px rgba(255,255,255,.4),
-    0 0 14px rgba(120,170,255,.5);
-}
-
-body.night .page{
-  background:linear-gradient(180deg,#161616,#0e0e0e);
-  color:#f0f0f0;
-  box-shadow:
-    inset 0 0 80px rgba(0,0,0,.85),
-    inset 0 0 140px rgba(0,0,0,.7),
-    0 10px 30px rgba(0,0,0,.7);
-}
 
 #adminPanel{ display:none; }
 
-input, textarea, button{ font-size:22px; }
-
 @media (max-width:768px){
   header h1{ font-size:56px; }
-  header p{ font-size:26px; }
 }
 </style>
 </head>
@@ -153,28 +138,30 @@ input, textarea, button{ font-size:22px; }
 
 <div id="adminPanel" class="page">
   <h2>Yeni Şiir Ekle</h2>
+
+  <select id="sairSelect"></select><br><br>
+
   <input id="title" placeholder="Şiir başlığı"><br><br>
   <textarea id="content" rows="6" placeholder="Şiiri yaz..."></textarea><br><br>
-
-  <h3>Şair Seç</h3>
-  <select id="sairSelect" onchange="renderPoems(true)"></select><br><br>
 
   <button onclick="addPoem()">Şiiri Ekle</button>
 
   <hr>
 
-  <h2>Yeni Şair Ekle</h2>
+  <h3>Yeni Şair</h3>
   <input id="sairName" placeholder="Şair adı"><br><br>
   <button onclick="addSair()">Şair Ekle</button>
+
+  <hr>
+  <button id="deleteSairBtn" class="delete-btn" onclick="deleteSair()">
+    Seçili Şairi Sil
+  </button>
 </div>
+
 <div id="sairler" class="page">
   <h2 style="text-align:center;">📜 Şairler</h2>
   <div id="sairList" style="text-align:center;"></div>
 </div>
-<hr>
-<button class="delete-btn" onclick="deleteSair()">
-  Seçili Şairi Sil
-</button>
 
 <div id="poems"></div>
 </div>
@@ -186,147 +173,67 @@ import {
   deleteDoc, doc, query, orderBy, setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-const ENTRY_PASSWORD = "2808";
-const ADMIN_PASSWORD = "0828";
+const ENTRY_PASSWORD="2808";
+const ADMIN_PASSWORD="0828";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDk_hyA2kEsJZhOOFzmsdiTsdWwptpMGNc",
-  authDomain: "siir-defteri.firebaseapp.com",
-  projectId: "siir-defteri",
-  storageBucket: "siir-defteri.firebasestorage.app",
-  messagingSenderId: "568234838204",
-  appId: "1:568234838204:web:76c1f3d7f69ba5e32968b9"
-};
-// 🌙 GECE MODU HATIRLAMA
+const firebaseConfig={ /* senin config */ };
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
 if(localStorage.getItem("nightMode")==="true"){
   document.body.classList.add("night");
 }
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.toggleNight = function(){
+window.toggleNight=()=>{
   document.body.classList.toggle("night");
-  localStorage.setItem(
-    "nightMode",
-    document.body.classList.contains("night")
-  );
+  localStorage.setItem("nightMode",
+    document.body.classList.contains("night"));
 }
 
-window.enterSite = function(){
+window.enterSite=()=>{
   if(entryPass.value===ENTRY_PASSWORD){
     entry.style.display="none";
     site.style.display="block";
-    loadSairler(false);   // 👈 ZİYARETÇİ
+    loadSairler(false);
   } else alert("Şifre yanlış");
 }
 
-window.showAdmin = function(){
-  const pass = prompt("Yönetici şifresi");
-  if(pass===ADMIN_PASSWORD){
+window.showAdmin=()=>{
+  if(prompt("Yönetici şifresi")===ADMIN_PASSWORD){
     adminPanel.style.display="block";
-    loadSairler(true);   // 👈 ADMİN
+    document.getElementById("deleteSairBtn").style.display="inline-block";
+    loadSairler(true);
   }
 }
 
-window.loadSairler = async function(isAdmin){
+window.loadSairler=async(isAdmin)=>{
   sairList.innerHTML="";
   sairSelect.innerHTML="";
 
-  const snap = await getDocs(collection(db,"sairler"));
-
+  const snap=await getDocs(collection(db,"sairler"));
   snap.forEach(d=>{
-    const name = d.data().name;
-
-    window.loadPoemsOfSair = async function(sairId,isAdmin){
-  poems.innerHTML="";
-  const q = query(
-    collection(db,"sairler",sairId,"poems"),
-    orderBy("date","desc")
-  );
-
-  const snap = await getDocs(q);
-
-  snap.forEach(d=>{
-    const p = d.data();
-    const div = document.createElement("div");
-    div.className="page";
-    div.innerHTML=`
-      <div class="poem-title">${p.title}</div>
-      <pre>${p.content}</pre>
-      <div style="text-align:center;opacity:.6">
-        ${new Date(p.date.seconds*1000).toLocaleString("tr-TR")}
-      </div>
-      ${isAdmin ? `<button class="delete-btn" onclick="deletePoem('${sairId}','${d.id}')">Sil</button>` : ""}
-    `;
-    poems.appendChild(div);
-  });
-}
-window.deleteSair = async function(){
-  const sairId = sairSelect.value;
-  if(!sairId) return;
-
-  if(!confirm("Şair ve tüm şiirleri silinsin mi?")) return;
-
-  const poemsSnap = await getDocs(
-    collection(db,"sairler",sairId,"poems")
-  );
-
-  for(const d of poemsSnap.docs){
-    await deleteDoc(d.ref);
-  }
-
-  await deleteDoc(doc(db,"sairler",sairId));
-
-  poems.innerHTML="";
-  loadSairler(true);
-}
-
-    // ANA EKRAN BUTONU
-    const btn = document.createElement("div");
+    const btn=document.createElement("div");
     btn.className="sair-btn";
-    btn.textContent = name;
-    btn.onclick = ()=> loadPoemsOfSair(d.id, isAdmin);
+    btn.textContent=d.data().name;
+    btn.onclick=()=>loadPoemsOfSair(d.id,isAdmin);
     sairList.appendChild(btn);
 
-    // ADMİN SELECT
     if(isAdmin){
-      const opt = document.createElement("option");
-      opt.value = d.id;
-      opt.textContent = name;
+      const opt=document.createElement("option");
+      opt.value=d.id;
+      opt.textContent=d.data().name;
       sairSelect.appendChild(opt);
     }
   });
 }
 
-window.addSair = async function(){
-  if(!sairName.value) return;
-  const id=sairName.value.toLowerCase().replace(/\s+/g,"-");
-  await setDoc(doc(db,"sairler",id),{ name:sairName.value });
-  sairName.value="";
-  loadSairler();
-}
-
-window.addPoem = async function(){
-  if(!title.value||!content.value||!sairSelect.value) return;
-  await addDoc(collection(db,"sairler",sairSelect.value,"poems"),{
-    title:title.value,
-    content:content.value,
-    date:new Date()
-  });
-  title.value="";
-  content.value="";
-  renderPoems(true);
-}
-
-window.renderPoems = async function(isAdmin){
+window.loadPoemsOfSair=async(sairId,isAdmin)=>{
   poems.innerHTML="";
-  if(!sairSelect.value) return;
-  const q=query(
-    collection(db,"sairler",sairSelect.value,"poems"),
-    orderBy("date","desc")
+  const snap=await getDocs(
+    query(collection(db,"sairler",sairId,"poems"),orderBy("date","desc"))
   );
-  const snap=await getDocs(q);
+
   snap.forEach(d=>{
     const p=d.data();
     poems.innerHTML+=`
@@ -334,14 +241,41 @@ window.renderPoems = async function(isAdmin){
         <div class="poem-title">${p.title}</div>
         <pre>${p.content}</pre>
         ${isAdmin?`<button class="delete-btn"
-        onclick="deletePoem('${sairSelect.value}','${d.id}')">Sil</button>`:""}
+        onclick="deletePoem('${sairId}','${d.id}')">Sil</button>`:""}
       </div>`;
   });
 }
 
-window.deletePoem = async function(sairId,id){
+window.addSair=async()=>{
+  if(!sairName.value)return;
+  const id=sairName.value.toLowerCase().replace(/\s+/g,"-");
+  await setDoc(doc(db,"sairler",id),{name:sairName.value});
+  sairName.value="";
+  loadSairler(true);
+}
+
+window.addPoem=async()=>{
+  if(!sairSelect.value||!title.value||!content.value)return;
+  await addDoc(collection(db,"sairler",sairSelect.value,"poems"),{
+    title:title.value,content:content.value,date:new Date()
+  });
+  title.value="";content.value="";
+  loadPoemsOfSair(sairSelect.value,true);
+}
+
+window.deletePoem=async(sairId,id)=>{
   await deleteDoc(doc(db,"sairler",sairId,"poems",id));
-  renderPoems(true);
+  loadPoemsOfSair(sairId,true);
+}
+
+window.deleteSair=async()=>{
+  if(!confirm("Şair ve tüm şiirleri silinsin mi?"))return;
+  const id=sairSelect.value;
+  const snap=await getDocs(collection(db,"sairler",id,"poems"));
+  for(const d of snap.docs){ await deleteDoc(d.ref); }
+  await deleteDoc(doc(db,"sairler",id));
+  poems.innerHTML="";
+  loadSairler(true);
 }
 </script>
 
