@@ -11,24 +11,73 @@
 *{font-family:'Dancing Script',cursive}
 body{margin:0;background:#87ceeb;transition:.4s}
 body.night{background:#0f1c2e}
+
 header{padding:25px;text-align:center;position:relative}
 header h1{font-size:90px}
 header p{font-size:36px}
-.admin-btn{position:absolute;top:20px;padding:8px 18px;
-background:#3b2f2f;color:white;border-radius:20px;cursor:pointer}
+
+.admin-btn{
+  position:absolute;top:20px;padding:8px 18px;
+  background:#3b2f2f;color:white;border-radius:20px;cursor:pointer
+}
 .admin{right:20px}
 .night-btn{right:140px}
-.page{max-width:800px;margin:50px auto;padding:40px;
-background:linear-gradient(#f8e7b1,#f4dea0);border-radius:14px}
-.sair-btn{display:inline-block;margin:10px;padding:10px 18px;
-background:#3b2f2f;color:white;border-radius:20px;cursor:pointer;font-size:22px}
+
+.page{
+  max-width:800px;margin:50px auto;padding:40px;
+  background:linear-gradient(#f8e7b1,#f4dea0);
+  border-radius:14px;
+  transition:.4s;
+}
+
+.sair-btn{
+  display:inline-block;margin:10px;padding:10px 18px;
+  background:#3b2f2f;color:white;border-radius:20px;
+  cursor:pointer;font-size:22px
+}
+
 .poem-title{font-size:46px;text-align:center}
 pre{white-space:pre-wrap;font-size:26px;text-align:center}
-.delete-btn{background:#a33;color:white;border:none;
-padding:8px 14px;border-radius:6px;cursor:pointer}
+
+.delete-btn{
+  background:#a33;color:white;border:none;
+  padding:8px 14px;border-radius:6px;cursor:pointer
+}
+
 #adminPanel{display:none}
-#entry{min-height:100vh;display:flex;align-items:center;justify-content:center}
-#entry-box{background:white;padding:30px;border-radius:12px;text-align:center}
+
+#entry{
+  min-height:100vh;display:flex;
+  align-items:center;justify-content:center
+}
+#entry-box{
+  background:white;padding:30px;
+  border-radius:12px;text-align:center
+}
+
+/* 🌙 GECE MODU – EKSİK OLAN ASIL KISIM */
+body.night header{
+  background:#0b1626;
+}
+
+body.night header h1,
+body.night header p{
+  color:#f2f2f2;
+}
+
+body.night .page{
+  background:linear-gradient(180deg,#161616,#0e0e0e);
+  color:#f0f0f0;
+}
+
+body.night .sair-btn{
+  background:#1e2f4f;
+}
+
+body.night #entry-box{
+  background:#111;
+  color:#f2f2f2;
+}
 </style>
 </head>
 
@@ -71,7 +120,6 @@ padding:8px 14px;border-radius:6px;cursor:pointer}
 <div id="poems"></div>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
@@ -79,13 +127,11 @@ padding:8px 14px;border-radius:6px;cursor:pointer}
 const ENTRY_PASSWORD="2808";
 const ADMIN_PASSWORD="0828";
 
-const firebaseConfig={
+firebase.initializeApp({
   apiKey:"AIzaSyDk_hyA2kEsJZhOOFzmsdiTsdWwptpMGNc",
   authDomain:"siir-defteri.firebaseapp.com",
-  projectId:"siir-defteri",
-};
-
-firebase.initializeApp(firebaseConfig);
+  projectId:"siir-defteri"
+});
 const db=firebase.firestore();
 
 if(localStorage.night==="1")document.body.classList.add("night");
@@ -110,8 +156,7 @@ function showAdmin(){
 }
 
 async function loadSairler(admin){
-  sairList.innerHTML="";
-  sairSelect.innerHTML="";
+  sairList.innerHTML="";sairSelect.innerHTML="";
   const snap=await db.collection("sairler").get();
   snap.forEach(d=>{
     const b=document.createElement("div");
@@ -155,9 +200,7 @@ function addPoem(){
   if(!title.value||!content.value)return;
   db.collection("sairler").doc(sairSelect.value)
     .collection("poems").add({
-      title:title.value,
-      content:content.value,
-      date:new Date()
+      title:title.value,content:content.value,date:new Date()
     });
   title.value="";content.value="";
 }
